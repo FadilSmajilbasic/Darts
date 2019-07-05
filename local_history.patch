@@ -1,0 +1,21 @@
+Index: app/src/main/java/com/duck/darts/MainActivity.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/duck/darts/MainActivity.java	(date 1562356227000)
++++ app/src/main/java/com/duck/darts/MainActivity.java	(date 1562356227000)
+@@ -72,13 +72,6 @@
+                 | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                 | View.SYSTEM_UI_FLAG_FULLSCREEN);
+ 
+-
+-        LinearLayoutCompat base = findViewById(R.id.base);
+-
+-        DrawableContainer background = new DrawableContainer();
+-
+-        ImageView img = new ImageView();
+-
+     }
+ 
+     private void initComponents() {

@@ -12,6 +12,7 @@ import android.graphics.drawable.DrawableContainer;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.InputType;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.KeyEvent;
@@ -96,6 +97,7 @@ public class MainActivity extends AppCompatActivity implements View.OnKeyListene
             EditText input = new EditText(getApplicationContext());
             input.setId(View.generateViewId());
             input.setTag(player.getName() + "Input");
+            input.setInputType(InputType.TYPE_CLASS_NUMBER);
             input.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT, 1));
             layout.addView(input);
         }
@@ -137,7 +139,7 @@ public class MainActivity extends AppCompatActivity implements View.OnKeyListene
 
             ListView list = player.getList();
             list.setId(View.generateViewId());
-            list.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT, ((float) 1 / (float) players.size())));
+            list.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT, ((float) 1 / (float) players.size())));
             list.setAdapter(player.getListAdapter());
 
             GradientDrawable border = new GradientDrawable();

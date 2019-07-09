@@ -17,6 +17,7 @@ import android.util.Log;
 import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.View;
+import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
@@ -30,7 +31,7 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity implements View.OnKeyListener, View.OnClickListener, View.OnLongClickListener {
+public class MainActivity extends AppCompatActivity implements View.OnKeyListener, View.OnClickListener, AdapterView.OnItemLongClickListener, View.OnLongClickListener {
 
 
     private int totScore = 300;
@@ -77,7 +78,7 @@ public class MainActivity extends AppCompatActivity implements View.OnKeyListene
             TextView label = new TextView(getApplicationContext());
             label.setId(View.generateViewId());
             label.setText(player.getName());
-            label.setTextSize(TypedValue.COMPLEX_UNIT_SP, 24);
+            label.setTextSize(TypedValue.COMPLEX_UNIT_SP, 12);
             label.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT, 1));
             label.setOnLongClickListener(this);
             layout.addView(label);
@@ -146,7 +147,7 @@ public class MainActivity extends AppCompatActivity implements View.OnKeyListene
             border.setColor(0xFFFFFF);
             border.setStroke(1, 0x000000);
             list.setBackground(border);
-
+            list.setOnItemLongClickListener(this);
             layout.addView(list);
         }
 
@@ -253,6 +254,28 @@ public class MainActivity extends AppCompatActivity implements View.OnKeyListene
     public boolean onLongClick(View view) {
 
         displayToast("[INFO] Remaining: " + getPlayerByName(((TextView) view).getText().toString()).getRemaining(totScore));
+        return false;
+    }
+
+    private Player getPlayerByAdapter(Adapter adapter){
+        for (Player player:
+             players) {
+            if(player.getListAdapter().equals(adapter)){
+                return  player;
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
+
+        try {
+            getPlayerByAdapter(adapterView.getAdapter()).removeItem(i);
+        }catch (NullPointerException npe){
+
+            displayToast("[FATAL ERROR] Unable to find player by adapter");
+        }
         return false;
     }
 }

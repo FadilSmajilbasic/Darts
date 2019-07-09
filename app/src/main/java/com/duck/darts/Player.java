@@ -59,6 +59,11 @@ public class Player {
 
 
         list = new ListView(context);
+    }
 
+    public void removeItem(int index){
+        score -= Integer.parseInt(playerItems.get(index));
+        playerItems.remove(index);
+        listAdapter.notifyDataSetChanged();
     }
 }

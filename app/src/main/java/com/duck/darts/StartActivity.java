@@ -9,7 +9,7 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-public class StartActivity extends AppCompatActivity implements View.OnClickListener{
+public class StartActivity extends AppCompatActivity implements View.OnClickListener {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -26,11 +26,15 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
     public void onClick(View view) {
         try {
             Intent intent = new Intent(this, com.duck.darts.MainActivity.class);
-            intent.putExtra("playerCount", Integer.parseInt(((TextView) findViewById(R.id.editText)).getText().toString()));
-            startActivity(intent);
-        }catch (NumberFormatException nfe){
+            int playerNumber = Integer.parseInt(((TextView) findViewById(R.id.editText)).getText().toString());
+            if (playerNumber > 0 && playerNumber <= 8) {
+                intent.putExtra("playerCount", playerNumber);
+                startActivity(intent);
+            }
+
+        } catch (NumberFormatException nfe) {
             displayToast("Invalid input");
-        }catch (NullPointerException npe){
+        } catch (NullPointerException npe) {
             displayToast("Invalid input");
         }
     }

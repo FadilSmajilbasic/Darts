@@ -1,27 +1,20 @@
 package com.duck.darts;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.LinearLayoutCompat;
 
-import android.graphics.BlurMaskFilter;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.ColorFilter;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.DrawableContainer;
+import android.graphics.Point;
 import android.graphics.drawable.GradientDrawable;
-import android.os.Build;
 import android.os.Bundle;
 import android.text.InputType;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.Display;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TableLayout;
@@ -31,13 +24,15 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
+@SuppressWarnings("Convert2Diamond")
 public class MainActivity extends AppCompatActivity implements View.OnKeyListener, View.OnClickListener, AdapterView.OnItemLongClickListener, View.OnLongClickListener {
 
 
     private int totScore = 300;
     private ArrayList<Player> players = new ArrayList<Player>();
+    private TableLayout table ;
 
-    public void setTotScore(int totScore) {
+    private void setTotScore(int totScore) {
         if (totScore > 0) {
             this.totScore = totScore;
         } else {
@@ -61,16 +56,19 @@ public class MainActivity extends AppCompatActivity implements View.OnKeyListene
 
 
         createPlayers(getIntent().getIntExtra("playerCount", 2));
-
+        table = findViewById(R.id.table);
         initComponents();
 
     }
 
     private void initComponents() {
-        TableLayout table = (TableLayout) findViewById(R.id.table);
+
 
         LinearLayout layout = getNewLayout();
         TableRow row = getNewTableRow();
+
+        float font   = ((-360f/14f)/15)*(float)players.size()+(360f/14f);
+        Log.d("density: " , "dp: " + font);
 
 
         for (Player player : players) {
@@ -78,8 +76,8 @@ public class MainActivity extends AppCompatActivity implements View.OnKeyListene
             TextView label = new TextView(getApplicationContext());
             label.setId(View.generateViewId());
             label.setText(player.getName());
-            label.setTextSize(TypedValue.COMPLEX_UNIT_SP, 12);
-            label.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT, 1));
+            label.setTextSize(TypedValue.COMPLEX_UNIT_DIP, font);
+            label.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT, 1));
             label.setOnLongClickListener(this);
             layout.addView(label);
 
@@ -99,7 +97,7 @@ public class MainActivity extends AppCompatActivity implements View.OnKeyListene
             input.setId(View.generateViewId());
             input.setTag(player.getName() + "Input");
             input.setInputType(InputType.TYPE_CLASS_NUMBER);
-            input.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT, 1));
+            input.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT, 1));
             layout.addView(input);
         }
         row.addView(layout);
@@ -115,9 +113,9 @@ public class MainActivity extends AppCompatActivity implements View.OnKeyListene
             button.setId(View.generateViewId());
             button.setTag(player.getName() + "Button");
             button.setText(player.getName() + " confirm");
-            button.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
+            button.setTextSize(TypedValue.COMPLEX_UNIT_SP, font/2);
             button.setOnClickListener(this);
-            button.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT, 1));
+            button.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT, 1));
             button.setOnClickListener(this);
             layout.addView(button);
 
@@ -130,17 +128,23 @@ public class MainActivity extends AppCompatActivity implements View.OnKeyListene
 
     private void createLists() {
 
-        TableLayout table = (TableLayout) findViewById(R.id.table);
 
         LinearLayout layout = getNewLayout();
         TableRow row = getNewTableRow();
 
+        Display display = getWindowManager().getDefaultDisplay();
+
+        Point size = new Point();
+
+        display.getSize(size);
 
         for (Player player : players) {
 
             ListView list = player.getList();
             list.setId(View.generateViewId());
-            list.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT, ((float) 1 / (float) players.size())));
+
+            list.setLayoutParams(new LinearLayout.LayoutParams(ListView.LayoutParams.MATCH_PARENT, size.y - 1100, 1.0f));
+
             list.setAdapter(player.getListAdapter());
 
             GradientDrawable border = new GradientDrawable();
@@ -157,7 +161,7 @@ public class MainActivity extends AppCompatActivity implements View.OnKeyListene
 
     private LinearLayout getNewLayout() {
         LinearLayout layout = new LinearLayout(getApplicationContext());
-        TableRow.LayoutParams layoutLayoutParams = new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT, 1);
+        TableRow.LayoutParams layoutLayoutParams = new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT, 1);
 
         layout.setLayoutParams(layoutLayoutParams);
         layout.setOrientation(LinearLayout.HORIZONTAL);
@@ -182,11 +186,11 @@ public class MainActivity extends AppCompatActivity implements View.OnKeyListene
         }
     }
 
-    public void displayToast(String message) {
+    private void displayToast(String message) {
         Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
     }
 
-    public void updateTotalScore() {
+    private void updateTotalScore() {
         try {
             setTotScore(Integer.parseInt(((EditText) findViewById(R.id.totalScore)).getText().toString()));
         } catch (NumberFormatException nfe) {
@@ -203,7 +207,6 @@ public class MainActivity extends AppCompatActivity implements View.OnKeyListene
 
     @Override
     public void onClick(View view) {
-        int id = view.getId();
         displayToast("Button pressed: " + ((Button) view).getText().toString());
 
 
@@ -234,7 +237,6 @@ public class MainActivity extends AppCompatActivity implements View.OnKeyListene
     private EditText getInputByPlayerName(String name) {
         String finalString = name + "Input";
 
-        TableLayout table = (TableLayout) findViewById(R.id.table);
         TableRow row = (TableRow) table.getChildAt(3);
         LinearLayout layout = (LinearLayout) row.getChildAt(0);
 
@@ -257,11 +259,12 @@ public class MainActivity extends AppCompatActivity implements View.OnKeyListene
         return false;
     }
 
-    private Player getPlayerByAdapter(Adapter adapter){
-        for (Player player:
-             players) {
-            if(player.getListAdapter().equals(adapter)){
-                return  player;
+    @org.jetbrains.annotations.Nullable
+    private Player getPlayerByAdapter(Adapter adapter) {
+        for (Player player :
+                players) {
+            if (player.getListAdapter().equals(adapter)) {
+                return player;
             }
         }
         return null;
@@ -272,7 +275,7 @@ public class MainActivity extends AppCompatActivity implements View.OnKeyListene
 
         try {
             getPlayerByAdapter(adapterView.getAdapter()).removeItem(i);
-        }catch (NullPointerException npe){
+        } catch (NullPointerException npe) {
 
             displayToast("[FATAL ERROR] Unable to find player by adapter");
         }

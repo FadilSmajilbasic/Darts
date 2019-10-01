@@ -1,4 +1,5 @@
 # Darts
+---
 A simple android app to keep track of the score when playing darts
 
 This app adds the possibility to play with multiple players,
